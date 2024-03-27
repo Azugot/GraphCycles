@@ -23,28 +23,29 @@ int main(int argc, char const *argv[])
     testGraph.addEdge(2, 5);
     testGraph.addEdge(3, 5);
     testGraph.addEdge(4, 5);
-
     testGraph.printGraph();
+    testGraph.generatePermutations();
 
-    Graph graph(5);
-    graph.genCompleteGraph();
+    testGraph.PERMPrintCyclePathCount();
+    testGraph.PERMPrintUniqueCyclesCount(); //Possivelmente quebrado, estou sem energias para fazer o debugging, e o do DFS parece estar correto ent fds
 
-    graph.generatePermutations();
-    vector<vector<int>> Cycles1 = graph.findCyclesPermutation(); // SHOULD BE ARROUND 16 CYCLES FOR THE MODEL GRAPH
-    cout << "Cycles Permutations: " << Cycles1.size() << endl;
-    graph.countCyclesFromTotal();
-    graph.printCycleCount();
+    //testGraph.PERMPrintPaths();
+
+    testGraph.DFSPrintCyclePathCount();
+    testGraph.DFSPrintUniqueCyclesCount();
+
+    testGraph.DFSPrintPaths();
 
     cout << endl
          << "It starts here" << endl;
 
-    testGraph.generatePermutations();
-    // testGraph.removeSamePaths();
-    vector<vector<int>> Cycles = testGraph.findCyclesPermutation(); // SHOULD BE ARROUND 16 CYCLES FOR THE MODEL GRAPH
-    cout << "Cycles Permutations: " << Cycles.size() << endl;
+    Graph graph(5);
+    graph.genCompleteGraph();
+    graph.PERMPrintCyclePathCount();
+    graph.PERMPrintUniqueCyclesCount();
 
-    testGraph.countCyclesFromTotal();
-    testGraph.printCycleCount();
+    graph.DFSPrintCyclePathCount();
+    graph.DFSPrintUniqueCyclesCount();
 
     return 0;
 }
