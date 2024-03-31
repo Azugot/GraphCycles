@@ -1,3 +1,6 @@
+// Purpose: Header file for the Graph class.
+// Authors: Augusto Scardua and Pedro Heinrich
+// All methods implemented in private section are effectively the ones used to solve the problem, and the public methods are used to interact with the Graph class.
 // Include necessary libraries
 #ifndef Graph_hpp
 #define Graph_hpp
@@ -39,22 +42,9 @@ namespace std
             path.push_back(node);              // Add the current node to the path
             for (int neighbor : adjList[node]) // Iterate through the neighbors of the current node
             {
-                if (neighbor == origin && node != parent) // If a cycle is found
+                if (neighbor == origin && node != parent && path.size() > 2) // If a cycle is found
                 {
-                    path.push_back(neighbor); // Add the origin node to complete the cycle
-
-                    // Uncomment the following lines to print the cycle path
-                    // cout << "Cycle found:" << cycleCount << endl;
-                    // for (auto i : path) {
-                    //     cout << i << " ";
-                    // }
-                    // cout << endl;
-
-                    path.pop_back();     // Remove the origin node from the path
-                    if (path.size() > 2) // If the cycle has more than 2 nodes
-                    {
-                        dfsPaths.push_back(path); // Add the cycle path to the list
-                    }
+                    dfsPaths.push_back(path); // Add the cycle path to the list
                 }
                 else if (neighbor != parent && neighbor != origin && !findElement(path, neighbor)) // If the neighbor is not the parent, origin, and not already in the path
                 {
@@ -97,6 +87,33 @@ namespace std
 
             vector<vector<int>> Npermutations = getPermutationsList();
             // cout << "Total permutations2: " << permutations.size() << endl;
+        }
+
+        /**
+         * Finds all paths in the graph that form cycles.
+         * 
+         * @return A vector of vectors, where each inner vector represents a cycle in the graph.
+         */
+        vector<vector<int>> PERMFindPaths()
+        {
+            vector<vector<int>> Cycles;
+            map<int, vector<int>> adjListCopy = getAdjList();
+            vector<vector<int>> permList = getPermutationsList();
+            for (auto instance : permList)
+            {
+                bool found = true;
+                for (int i = 0; i < instance.size() && found; i++)
+                {
+                    int u = instance[i];
+                    int v = instance[(i + 1) % instance.size()];
+                    found = findElement(adjListCopy[u], v);
+                }
+                if (found)
+                {
+                    Cycles.push_back(instance);
+                }
+            }
+            return Cycles;
         }
 
         /**
@@ -351,35 +368,7 @@ namespace std
             setPermutationsList(paths); // Update the permutations list
             // printPermutations(); // Print the updated permutations
         }
-
-        /**
-         * Finds all paths in the graph that form cycles.
-         * 
-         * @return A vector of vectors, where each inner vector represents a cycle in the graph.
-         */
-        vector<vector<int>> PERMFindPaths()
-        {
-            vector<vector<int>> Cycles;
-            map<int, vector<int>> adjListCopy = getAdjList();
-            vector<vector<int>> permList = getPermutationsList();
-            for (auto instance : permList)
-            {
-                bool found = true;
-                for (int i = 0; i < instance.size() && found; i++)
-                {
-                    int u = instance[i];
-                    int v = instance[(i + 1) % instance.size()];
-                    found = findElement(adjListCopy[u], v);
-                }
-                if (found)
-                {
-                    Cycles.push_back(instance);
-                }
-            }
-            return Cycles;
-        }
-
-        
+     
         /**
          * @brief Constructs a new Graph object.
          * 
