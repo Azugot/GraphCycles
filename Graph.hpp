@@ -30,6 +30,25 @@ namespace std
         vector<vector<int>> dfsPaths;         // List to store DFS paths
 
         /**
+         * Checks if an element exists in a vector.
+         *
+         * @param vec The vector to search in.
+         * @param element The element to find.
+         * @return True if the element is found, false otherwise.
+         */
+        bool findElement(vector<int> vec, int element)
+        {
+            for (auto i : vec)
+            {
+                if (i == element)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        /**
          * Performs a depth-first search starting from a given node in the graph.
          *
          * @param node The current node being visited.
@@ -63,11 +82,16 @@ namespace std
             int permNumber = getNNodes();     // Permutation Max size
             // cout << "Permutation Max size: " << permNumber << endl;
 
+            // vector<int> maxPath;
+
             vector<int> allNumbers(permNumber); // Initialize with numbers from 0 to permNumber - 1
             for (int i = 0; i < permNumber; i++)
             {
                 allNumbers[i] = i;
+                // maxPath.push_back(i);
             }
+
+            // permutations.push_back(maxPath); // Add the max path to the permutations list
 
             for (int j = permNumber; j > 2; j--) // Generate permutations for sizes n to 3
             {
@@ -118,7 +142,7 @@ namespace std
 
         /**
          * Removes duplicate vectors from the given vector of vectors.
-         * 
+         *
          * @param permutations The vector of vectors containing permutations.
          * @return A new vector of vectors with duplicate permutations removed.
          */
@@ -139,39 +163,39 @@ namespace std
         // Setter methods
         /**
          * @brief Sets the number of nodes in the graph.
-         * 
+         *
          * This function sets the number of nodes in the graph to the specified value.
-         * 
+         *
          * @param n The number of nodes to set.
          */
         void setNNodes(int n) { NNodes = n; }
 
         /**
          * @brief Sets the adjacency list of the graph.
-         * 
+         *
          * This function sets the adjacency list of the graph to the provided map of integers and vectors.
          * The map represents the vertices of the graph, and each vector represents the adjacent vertices of a particular vertex.
-         * 
+         *
          * @param adj The map representing the adjacency list of the graph.
          */
         void setAdjList(map<int, vector<int>> adj) { adjList = adj; }
 
         /**
          * @brief Sets the permutations list for the graph.
-         * 
+         *
          * This function sets the permutations list for the graph. The permutations list is a vector of vectors of integers,
          * where each inner vector represents a permutation of the vertices in the graph. This function updates the permutationsList
          * member variable of the graph object.
-         * 
+         *
          * @param perms The permutations list to be set.
          */
         void setPermutationsList(vector<vector<int>> perms) { this->permutationsList = perms; }
-        
+
         /**
          * @brief Sets the DFS paths of the graph.
-         * 
+         *
          * This function sets the DFS paths of the graph to the specified paths.
-         * 
+         *
          * @param paths A vector of vectors representing the DFS paths.
          */
         void setDfsPaths(vector<vector<int>> paths) { this->dfsPaths = paths; }
@@ -206,12 +230,14 @@ namespace std
          */
         vector<vector<int>> getDfsPaths() { return dfsPaths; }
 
+        // DFS Methods
+
         /**
          * Counts the number of paths from a given source vertex to all other vertices in the graph using Depth-First Search (DFS).
-         * 
+         *
          * This function performs a Depth-First Search starting from the source vertex and counts the number of paths to each vertex in the graph.
          * The result is stored in a data structure that can be accessed later.
-         * 
+         *
          * @param None
          * @return None
          */
@@ -279,20 +305,27 @@ namespace std
          */
         void DFSPrintCyclePathCount()
         {
-            DFSCountPathsFromTotal();
+            if (getDfsPaths().size() == 0)
+            {
+                DFSCountPathsFromTotal();
+            }
+
             cout << "CyclesPaths DFS: " << getDfsPaths().size() << endl;
         }
 
         /**
          * Prints the count of unique cycles using Depth-First Search (DFS).
-         * 
+         *
          * This function first counts the total number of paths using DFSCountPathsFromTotal(),
          * then removes duplicate paths using DFSRemoveSamePaths(), and finally prints the count
          * of unique cycles.
          */
         void DFSPrintUniqueCyclesCount()
         {
-            DFSCountPathsFromTotal();
+            if (getDfsPaths().size() == 0)
+            {
+                DFSCountPathsFromTotal();
+            }
             DFSRemoveSamePaths();
             cout << "Unique Cycles DFS: " << getDfsPaths().size() << endl;
         }
@@ -304,21 +337,27 @@ namespace std
          */
         void PERMPrintCyclePathCount()
         {
-            generatePermutations();
+            if (getPermutationsList().size() == 0)
+            {
+                generatePermutations();
+            }
             vector<vector<int>> Cycles = PERMFindPaths();
             cout << "CyclesPaths Permutations: " << Cycles.size() << endl;
         }
 
         /**
          * Prints the count of unique cycles permutations.
-         * 
+         *
          * This function generates permutations, removes same paths, and then prints the count of unique cycles permutations.
-         * 
+         *
          * @return void
          */
         void PERMPrintUniqueCyclesCount()
         {
-            generatePermutations();
+            if (getPermutationsList().size() == 0)
+            {
+                generatePermutations();
+            }
             PERMRemoveSamePaths();
             cout << "Unique Cycles Permutations: " << getPermutationsList().size() << endl;
         }
@@ -368,10 +407,9 @@ namespace std
             setPermutationsList(paths); // Update the permutations list
             // printPermutations(); // Print the updated permutations
         }
-     
         /**
          * @brief Constructs a new Graph object.
-         * 
+         *
          * This constructor initializes a new Graph object with zero nodes.
          */
         Graph()
@@ -381,7 +419,7 @@ namespace std
 
         /**
          * @brief Constructs a Graph object with the specified number of nodes.
-         * 
+         *
          * @param n The number of nodes in the graph.
          */
         Graph(int n)
@@ -395,7 +433,7 @@ namespace std
 
         /**
          * Adds an edge between two vertices in the graph.
-         * 
+         *
          * @param u The first vertex.
          * @param v The second vertex.
          */
@@ -407,10 +445,10 @@ namespace std
 
         /**
          * @brief Removes an edge between two vertices in the graph.
-         * 
+         *
          * This function removes the edge between vertex 'u' and vertex 'v' in the graph.
          * It removes 'v' from the adjacency list of 'u' and 'u' from the adjacency list of 'v'.
-         * 
+         *
          * @param u The first vertex of the edge.
          * @param v The second vertex of the edge.
          */
@@ -449,25 +487,6 @@ namespace std
                 }
                 cout << endl;
             }
-        }
-
-        /**
-         * Checks if an element exists in a vector.
-         * 
-         * @param vec The vector to search in.
-         * @param element The element to find.
-         * @return True if the element is found, false otherwise.
-         */
-        bool findElement(vector<int> vec, int element)
-        {
-            for (auto i : vec)
-            {
-                if (i == element)
-                {
-                    return true;
-                }
-            }
-            return false;
         }
 
         /**
