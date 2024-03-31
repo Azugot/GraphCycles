@@ -29,7 +29,9 @@ namespace std
         map<int, vector<int>> adjList;        // Adjacency list representation of the graph
         vector<vector<int>> permutationsList; // List to store permutations
         vector<vector<int>> dfsPaths;         // List to store DFS paths
-        int count = 0;
+        int DFScount = 0;
+        int PERMcount = 0;
+        bool storePaths = false;
 
         /**
          * Checks if an element exists in a vector.
@@ -65,8 +67,14 @@ namespace std
             {
                 if (neighbor == origin && node != parent && path.size() > 2) // If a cycle is found
                 {
-                    // dfsPaths.push_back(path); // Add the cycle path to the list
-                    count++;
+                    if (storePaths == true)
+                    {
+                        dfsPaths.push_back(path); // Add the cycle path to the list
+                    }
+                    else
+                    {
+                        DFScount++;
+                    }
                 }
                 else if (neighbor != parent && neighbor != origin && !findElement(path, neighbor)) // If the neighbor is not the parent, origin, and not already in the path
                 {
@@ -75,6 +83,16 @@ namespace std
             }
         }
 
+        /**
+         * Generates optimized permutations for subsets of nodes.
+         *
+         * This function generates permutations for subsets of nodes ranging from size 3 to NNodes.
+         * It uses an optimized approach to generate the permutations by generating subsets of nodes
+         * and then permuting each subset. The permutations are stored in the permutationsList vector.
+         *
+         * @param None
+         * @return None
+         */
         void generatePermutationsOptimized()
         {
             vector<int> nodes(NNodes);
@@ -103,52 +121,17 @@ namespace std
                     sort(subset.begin(), subset.end());
                     do
                     {
-                        permutationsList.push_back(subset);
-                        // count++;
+                        if (storePaths == true)
+                        {
+                            permutationsList.push_back(subset);
+                        }
+                        else
+                        {
+                            PERMcount++;
+                        }
                     } while (next_permutation(subset.begin(), subset.end()));
                 } while (prev_permutation(v.begin(), v.end()));
             }
-        }
-
-        /**
-         * Generates all possible permutations of numbers from 0 to (n-1), where n is the number of nodes in the graph.
-         * The permutations are stored in a vector of vectors.
-         */
-        void generatePermutations()
-        {
-            vector<vector<int>> permutations; // Create a vector to store all the permutations
-            int permNumber = getNNodes();     // Permutation Max size
-            // cout << "Permutation Max size: " << permNumber << endl;
-
-            // vector<int> maxPath;
-
-            vector<int> allNumbers(permNumber); // Initialize with numbers from 0 to permNumber - 1
-            for (int i = 0; i < permNumber; i++)
-            {
-                allNumbers[i] = i;
-                // maxPath.push_back(i);
-            }
-
-            // permutations.push_back(maxPath); // Add the max path to the permutations list
-
-            for (int j = permNumber; j > 2; j--) // Generate permutations for sizes n to 3
-            {
-                do
-                {
-                    // Push only the first j elements to get a permutation of size j
-                    vector<int> currentPermutation(allNumbers.begin(), allNumbers.begin() + j);
-                    permutations.push_back(currentPermutation);
-                } while (next_permutation(allNumbers.begin(), allNumbers.end())); // Generate the next permutation
-
-                // After generating all permutations of size j, reset the permutation order to ensure all combinations are covered
-                sort(allNumbers.begin(), allNumbers.end());
-            }
-            permutations = removeDuplicates(permutations);
-            setPermutationsList(permutations); // Store the permutations
-            // cout << "Total permutations: " << permutations.size() << endl;
-
-            vector<vector<int>> Npermutations = getPermutationsList();
-            // cout << "Total permutations2: " << permutations.size() << endl;
         }
 
         /**
@@ -228,6 +211,16 @@ namespace std
          * @param perms The permutations list to be set.
          */
         void setPermutationsList(vector<vector<int>> perms) { this->permutationsList = perms; }
+
+        /**
+         * Sets whether or not to store paths in the graph.
+         *
+         * @param storePaths A boolean value indicating whether to store paths.
+         */
+        bool setStorePaths(bool storePaths)
+        {
+            this->storePaths = storePaths;
+        }
 
         /**
          * @brief Sets the DFS paths of the graph.
@@ -326,13 +319,20 @@ namespace std
          */
         void DFSPrintPaths()
         {
-            for (auto i : getDfsPaths())
+            if (storePaths == true)
             {
-                for (auto j : i)
+                for (auto i : getDfsPaths())
                 {
-                    cout << j << " ";
+                    for (auto j : i)
+                    {
+                        cout << j << " ";
+                    }
+                    cout << endl;
                 }
-                cout << endl;
+            }
+            else
+            {
+                cout << "Function Disabled as it requires the Paths to be Stored (May not work for graphs with more than 9 vertices)" << endl;
             }
         }
 
@@ -347,8 +347,14 @@ namespace std
             {
                 DFSCountPathsFromTotal();
             }
-
-            cout << "CyclesPaths DFS: " << getDfsPaths().size() << this->count << endl;
+            if (storePaths == true)
+            {
+                cout << "CyclesPaths DFS: " << getDfsPaths().size() << endl;
+            }
+            else
+            {
+                cout << "CyclesPaths DFS: " << this->DFScount << endl;
+            }
         }
 
         /**
@@ -360,12 +366,19 @@ namespace std
          */
         void DFSPrintUniqueCyclesCount()
         {
-            if (getDfsPaths().size() == 0)
+            if (storePaths == true)
             {
-                DFSCountPathsFromTotal();
+                if (getDfsPaths().size() == 0)
+                {
+                    DFSCountPathsFromTotal();
+                }
+                DFSRemoveSamePaths();
+                cout << "Unique Cycles DFS: " << getDfsPaths().size() << endl;
             }
-            DFSRemoveSamePaths();
-            cout << "Unique Cycles DFS: " << getDfsPaths().size() << endl;
+            else
+            {
+                cout << "Function Disabled as it requires the Paths to be Stored (May not work for graphs with more than 9 vertices)" << endl;
+            }
         }
 
         /**
@@ -379,8 +392,15 @@ namespace std
             {
                 generatePermutationsOptimized();
             }
-            vector<vector<int>> Cycles = PERMFindPaths();
-            cout << "CyclesPaths Permutations: " << Cycles.size() << endl;
+            if (storePaths == true)
+            {
+                vector<vector<int>> Cycles = PERMFindPaths();
+                cout << "CyclesPaths Permutations: " << Cycles.size() << endl;
+            }
+            else
+            {
+                cout << "CyclesPaths Permutations: " << this->PERMcount << endl;
+            }
         }
 
         /**
@@ -392,12 +412,19 @@ namespace std
          */
         void PERMPrintUniqueCyclesCount()
         {
-            if (getPermutationsList().size() == 0)
+            if (storePaths == true)
             {
-                generatePermutations();
+                if (getPermutationsList().size() == 0)
+                {
+                    generatePermutationsOptimized();
+                }
+                PERMRemoveSamePaths();
+                cout << "Unique Cycles Permutations: " << getPermutationsList().size() << endl;
             }
-            PERMRemoveSamePaths();
-            cout << "Unique Cycles Permutations: " << getPermutationsList().size() << endl;
+            else
+            {
+                cout << "Function Disabled as it requires the Paths to be Stored (May not work for graphs with more than 9 vertices)" << endl;
+            }
         }
 
         /**
@@ -405,13 +432,20 @@ namespace std
          */
         void PERMPrintPaths()
         {
-            for (auto i : getPermutationsList())
+            if (storePaths == true)
             {
-                for (auto j : i)
+                for (auto i : getPermutationsList())
                 {
-                    cout << j << " ";
+                    for (auto j : i)
+                    {
+                        cout << j << " ";
+                    }
+                    cout << endl;
                 }
-                cout << endl;
+            }
+            else
+            {
+                cout << "Function Disabled as it requires the Paths to be Stored (May not work for graphs with more than 9 vertices)" << endl;
             }
         }
 
