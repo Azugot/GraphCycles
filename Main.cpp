@@ -11,7 +11,7 @@ int main(int argc, char const *argv[])
     // e4 -0125
     // f5 -234
     Graph testGraph(6);
-    testGraph.setStorePaths(false); // Necessario para manter o codigo "memory safe", caso esteja setado para TRUE, ira armazenar todos os caminhos possiveis
+    testGraph.setStorePaths(true); // Necessario para manter o codigo "memory safe", caso esteja setado para TRUE, ira armazenar todos os caminhos possiveis
                                    // oque pode gerar um consumo de memoria muito alto para grafos grandes(>9 vertices), para grafos pequenos(<=9 vertices) é seguro
                                    // porem o valor ver como FALSE por padrao por ser mais seguro e levemente +eficiente.
     testGraph.addEdge(0, 1);
