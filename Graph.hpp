@@ -57,6 +57,61 @@ namespace std
             }
         }
 
+        /**
+         * Generates all possible permutations of numbers from 0 to (n-1), where n is the number of nodes in the graph.
+         * The permutations are stored in a vector of vectors.
+         */
+        void generatePermutations()
+        {
+            vector<vector<int>> permutations; // Create a vector to store all the permutations
+            int permNumber = getNNodes();     // Permutation Max size
+            // cout << "Permutation Max size: " << permNumber << endl;
+
+            vector<int> allNumbers(permNumber); // Initialize with numbers from 0 to permNumber - 1
+            for (int i = 0; i < permNumber; i++)
+            {
+                allNumbers[i] = i;
+            }
+
+            for (int j = permNumber; j > 2; j--) // Generate permutations for sizes n to 3
+            {
+                do
+                {
+                    // Push only the first j elements to get a permutation of size j
+                    vector<int> currentPermutation(allNumbers.begin(), allNumbers.begin() + j);
+                    permutations.push_back(currentPermutation);
+                } while (next_permutation(allNumbers.begin(), allNumbers.end())); // Generate the next permutation
+
+                // After generating all permutations of size j, reset the permutation order to ensure all combinations are covered
+                sort(allNumbers.begin(), allNumbers.end());
+            }
+            permutations = removeDuplicates(permutations);
+            setPermutationsList(permutations); // Store the permutations
+            // cout << "Total permutations: " << permutations.size() << endl;
+
+            vector<vector<int>> Npermutations = getPermutationsList();
+            // cout << "Total permutations2: " << permutations.size() << endl;
+        }
+
+        /**
+         * Removes duplicate vectors from the given vector of vectors.
+         * 
+         * @param permutations The vector of vectors containing permutations.
+         * @return A new vector of vectors with duplicate permutations removed.
+         */
+        vector<vector<int>> removeDuplicates(vector<vector<int>> &permutations)
+        {
+            vector<vector<int>> uniquePermutations;
+            for (auto i : permutations)
+            {
+                if (find(uniquePermutations.begin(), uniquePermutations.end(), i) == uniquePermutations.end())
+                {
+                    uniquePermutations.push_back(i);
+                }
+            }
+            return uniquePermutations;
+        }
+
     public:
         // Setter methods
         /**
@@ -128,13 +183,6 @@ namespace std
          */
         vector<vector<int>> getDfsPaths() { return dfsPaths; }
 
-        // Perform depth-first search to count cycles starting from a given origin node
-        void DFSCountPathsFromOrigin(int origin)
-        {
-            map<int, bool> visited;
-            depthFirstSearch(origin, origin, {}, -1); // Start DFS with the origin
-        }
-
         /**
          * Counts the number of paths from a given source vertex to all other vertices in the graph using Depth-First Search (DFS).
          * 
@@ -186,7 +234,6 @@ namespace std
             // printPermutations(); // Print the updated permutations
         }
 
-        
         /**
          * Prints all the paths obtained from a Depth-First Search traversal of the graph.
          */
@@ -201,7 +248,6 @@ namespace std
                 cout << endl;
             }
         }
-
 
         /**
          * Prints the count of cycle paths using Depth-First Search (DFS).
@@ -393,61 +439,6 @@ namespace std
                 }
                 cout << endl;
             }
-        }
-
-        /**
-         * Generates all possible permutations of numbers from 0 to (n-1), where n is the number of nodes in the graph.
-         * The permutations are stored in a vector of vectors.
-         */
-        void generatePermutations()
-        {
-            vector<vector<int>> permutations; // Create a vector to store all the permutations
-            int permNumber = getNNodes();     // Permutation Max size
-            // cout << "Permutation Max size: " << permNumber << endl;
-
-            vector<int> allNumbers(permNumber); // Initialize with numbers from 0 to permNumber - 1
-            for (int i = 0; i < permNumber; i++)
-            {
-                allNumbers[i] = i;
-            }
-
-            for (int j = permNumber; j > 2; j--) // Generate permutations for sizes n to 3
-            {
-                do
-                {
-                    // Push only the first j elements to get a permutation of size j
-                    vector<int> currentPermutation(allNumbers.begin(), allNumbers.begin() + j);
-                    permutations.push_back(currentPermutation);
-                } while (next_permutation(allNumbers.begin(), allNumbers.end())); // Generate the next permutation
-
-                // After generating all permutations of size j, reset the permutation order to ensure all combinations are covered
-                sort(allNumbers.begin(), allNumbers.end());
-            }
-            permutations = removeDuplicates(permutations);
-            setPermutationsList(permutations); // Store the permutations
-            // cout << "Total permutations: " << permutations.size() << endl;
-
-            vector<vector<int>> Npermutations = getPermutationsList();
-            // cout << "Total permutations2: " << permutations.size() << endl;
-        }
-
-        /**
-         * Removes duplicate vectors from the given vector of vectors.
-         * 
-         * @param permutations The vector of vectors containing permutations.
-         * @return A new vector of vectors with duplicate permutations removed.
-         */
-        vector<vector<int>> removeDuplicates(vector<vector<int>> &permutations)
-        {
-            vector<vector<int>> uniquePermutations;
-            for (auto i : permutations)
-            {
-                if (find(uniquePermutations.begin(), uniquePermutations.end(), i) == uniquePermutations.end())
-                {
-                    uniquePermutations.push_back(i);
-                }
-            }
-            return uniquePermutations;
         }
 
         /**
