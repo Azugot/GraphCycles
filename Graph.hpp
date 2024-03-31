@@ -11,7 +11,13 @@
 namespace std
 {
 
-    // Define a Graph class
+    /**
+     * @class Graph
+     * @brief Represents a graph data structure.
+     *
+     * The Graph class provides functionality to represent a graph using an adjacency list representation.
+     * It supports operations such as depth-first search, generating permutations, and counting paths.
+     */
     class Graph
     {
     private:
