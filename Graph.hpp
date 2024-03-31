@@ -10,6 +10,7 @@
 #include <vector>
 #include <algorithm>
 #include <set>
+#include <numeric>
 
 namespace std
 {
@@ -28,6 +29,7 @@ namespace std
         map<int, vector<int>> adjList;        // Adjacency list representation of the graph
         vector<vector<int>> permutationsList; // List to store permutations
         vector<vector<int>> dfsPaths;         // List to store DFS paths
+        int count = 0;
 
         /**
          * Checks if an element exists in a vector.
@@ -63,12 +65,48 @@ namespace std
             {
                 if (neighbor == origin && node != parent && path.size() > 2) // If a cycle is found
                 {
-                    dfsPaths.push_back(path); // Add the cycle path to the list
+                    // dfsPaths.push_back(path); // Add the cycle path to the list
+                    count++;
                 }
                 else if (neighbor != parent && neighbor != origin && !findElement(path, neighbor)) // If the neighbor is not the parent, origin, and not already in the path
                 {
                     depthFirstSearch(neighbor, origin, path, node); // Recursively call depth-first search on the neighbor
                 }
+            }
+        }
+
+        void generatePermutationsOptimized()
+        {
+            vector<int> nodes(NNodes);
+            iota(nodes.begin(), nodes.end(), 0); // Preenche nodes de 0 a NNodes-1
+
+            // Limpa a lista de permutações anterior
+            permutationsList.clear();
+
+            // Gera subconjuntos de tamanho 3 até N
+            for (int r = 3; r <= NNodes; ++r)
+            {
+                vector<bool> v(NNodes);
+                fill(v.begin(), v.begin() + r, true);
+
+                do
+                {
+                    vector<int> subset;
+                    for (int i = 0; i < NNodes; ++i)
+                    {
+                        if (v[i])
+                        {
+                            subset.push_back(i);
+                        }
+                    }
+                    // Gera permutações para o subconjunto
+                    sort(subset.begin(), subset.end());
+                    do
+                    {
+                        permutationsList.push_back(subset);
+                        // count++;
+                    } while (next_permutation(subset.begin(), subset.end()));
+                } while (prev_permutation(v.begin(), v.end()));
             }
         }
 
@@ -115,7 +153,7 @@ namespace std
 
         /**
          * Finds all paths in the graph that form cycles.
-         * 
+         *
          * @return A vector of vectors, where each inner vector represents a cycle in the graph.
          */
         vector<vector<int>> PERMFindPaths()
@@ -310,7 +348,7 @@ namespace std
                 DFSCountPathsFromTotal();
             }
 
-            cout << "CyclesPaths DFS: " << getDfsPaths().size() << endl;
+            cout << "CyclesPaths DFS: " << getDfsPaths().size() << this->count << endl;
         }
 
         /**
@@ -339,7 +377,7 @@ namespace std
         {
             if (getPermutationsList().size() == 0)
             {
-                generatePermutations();
+                generatePermutationsOptimized();
             }
             vector<vector<int>> Cycles = PERMFindPaths();
             cout << "CyclesPaths Permutations: " << Cycles.size() << endl;
@@ -504,7 +542,6 @@ namespace std
             }
         }
     };
-
 }
 
 #endif
