@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <set>
 #include <numeric>
-
 namespace std
 {
 
@@ -50,6 +49,28 @@ namespace std
                 }
             }
             return false;
+        }
+
+        bool isValidPath(vector<int> path)
+        {
+            path.push_back(path[0]); // Adiciona o primeiro vértice ao final do caminho
+
+            //for (int i : path){
+            //    cout << i << " ";
+            //}
+            //cout << endl;
+
+            for (size_t i = 0; i < path.size() - 1; ++i)
+            {
+                // Verifica se cada vértice está conectado ao próximo
+                if (find(adjList[path[i]].begin(), adjList[path[i]].end(), path[i + 1]) == adjList[path[i]].end())
+                {
+                    //cout << "Invalid Path" << endl;
+                    return false; // O próximo vértice não está na lista de adjacências do vértice atual
+                }
+            }
+            //cout << "Valid Path" << endl;
+            return true; // Todos os vértices estão conectados
         }
 
         /**
@@ -121,13 +142,17 @@ namespace std
                     sort(subset.begin(), subset.end());
                     do
                     {
-                        if (storePaths == true)
+
+                        if (isValidPath(subset))
                         {
-                            permutationsList.push_back(subset);
-                        }
-                        else
-                        {
-                            PERMcount++;
+                            if (storePaths == true)
+                            {
+                                permutationsList.push_back(subset);
+                            }
+                            else
+                            {
+                                PERMcount++;
+                            }
                         }
                     } while (next_permutation(subset.begin(), subset.end()));
                 } while (prev_permutation(v.begin(), v.end()));
