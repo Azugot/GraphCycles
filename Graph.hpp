@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <set>
 #include <numeric>
+#include <chrono>
 namespace std
 {
 
@@ -55,21 +56,21 @@ namespace std
         {
             path.push_back(path[0]); // Adiciona o primeiro vértice ao final do caminho
 
-            //for (int i : path){
-            //    cout << i << " ";
-            //}
-            //cout << endl;
+            // for (int i : path){
+            //     cout << i << " ";
+            // }
+            // cout << endl;
 
             for (size_t i = 0; i < path.size() - 1; ++i)
             {
                 // Verifica se cada vértice está conectado ao próximo
                 if (find(adjList[path[i]].begin(), adjList[path[i]].end(), path[i + 1]) == adjList[path[i]].end())
                 {
-                    //cout << "Invalid Path" << endl;
+                    // cout << "Invalid Path" << endl;
                     return false; // O próximo vértice não está na lista de adjacências do vértice atual
                 }
             }
-            //cout << "Valid Path" << endl;
+            // cout << "Valid Path" << endl;
             return true; // Todos os vértices estão conectados
         }
 
@@ -116,6 +117,9 @@ namespace std
          */
         void generatePermutationsOptimized()
         {
+            using Clock = std::chrono::high_resolution_clock; // Usar um relógio de alta resolução
+            auto start = Clock::now();
+
             vector<int> nodes(NNodes);
             iota(nodes.begin(), nodes.end(), 0); // Preenche nodes de 0 a NNodes-1
 
@@ -157,6 +161,9 @@ namespace std
                     } while (next_permutation(subset.begin(), subset.end()));
                 } while (prev_permutation(v.begin(), v.end()));
             }
+            auto end = Clock::now();                                                            // Finalizar o ponto de tempo após a operação
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start); // Calcular a duração em milissegundos
+            cout << "Time taken PERM: " << duration.count() << " milliseconds" << endl;
         }
 
         /**
@@ -299,6 +306,9 @@ namespace std
          */
         void DFSCountPathsFromTotal()
         {
+            using Clock = std::chrono::high_resolution_clock; // Usar um relógio de alta resolução
+            auto start = Clock::now();
+            // Iniciar o ponto de tempo antes da operação
             map<int, bool> visited;
             map<int, vector<int>> adjListCopy = getAdjList();
             vector<vector<int>> dfsPaths;
@@ -308,6 +318,9 @@ namespace std
                 int origin = i.first;
                 depthFirstSearch(origin, origin, {}, -1);
             }
+            auto end = Clock::now();                                                            // Finalizar o ponto de tempo após a operação
+            auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start); // Calcular a duração em milissegundos
+            cout << "Time taken DFS: " << duration.count() << " milliseconds" << endl;
         }
 
         /**
